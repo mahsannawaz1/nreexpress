@@ -14,7 +14,10 @@ const  courseSchema = new mongoose.Schema(
         category: {
             type:String,
             required: true,
-            enum: ['web','mobile','network']
+            enum: ['web','mobile','network'],
+            lowercase:true,
+            // uppercase:true,
+            trim:true
         },
         author: String,
         tags: {
@@ -34,7 +37,9 @@ const  courseSchema = new mongoose.Schema(
             max: 100,
             required: function() { //use anonymous functions instead of arrows
                 return this.isPublished
-            }
+            },
+            get: value => value.toFixed(2),
+            set: value => value.toFixed(2)
         }
     }
 )
@@ -44,12 +49,12 @@ const Course = mongoose.model('Course',courseSchema)
 
 async function createCourse(){
     const course = new Course({
-        // name:'React ',
+        name:'React JS Native',
         author:'Ahsan Nawaz',
-        tags:null, 
+        tags:['js','react'], 
         isPublished:false,
-        price:49.99,
-        category:'-'
+        price:15,
+        category:'     mobile   '
     })
     try{
         //  await course.validate()

@@ -21,7 +21,7 @@ app.use(express.static('public'))
 app.use(helmet())
 
 console.log(config.get('name'))
-console.log(config.get('mail.password'))
+// console.log(config.get('mail.password'))
 
 if(app.get('env')=='development'){
     console.log('Morgan enabled')

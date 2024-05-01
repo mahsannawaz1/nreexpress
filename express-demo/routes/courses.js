@@ -1,36 +1,62 @@
+const courseAPI = require('../../mongo-demo/index')
+console.log(courseAPI)
 const express  =require('express')
+const Joi = require('joi')
 const router = express.Router()
-let courses=
-    [
-        {id:1,name:'C1'},
-        {id:2,name:'C2'},
-        {id:3,name:'C3'}
-    ]
 
 
 router.get('/',(req,res)=>{
-    res.send(courses)
+    courseAPI.getCourses().then(courses=>{
+        
+        res.send(courses)
+    })
+    
+    
 })
 
-router.get('//:id',(req,res)=>{
-    res.send(`Course ${req.params.id}`) 
+router.get('/:id',(req,res)=>{
+    console.log(req.params.id)
+    courseAPI.getCourse(req.params.id).then(course=>{
+        res.send(course)
+    })
 })
+
 router.post('/',(req,res)=>{
     
     const schema = Joi.object({
-        name:Joi.string().min(3).required()
+        name:Joi.string().min(3).max(255).required(),
+        category:Joi.string().required(),
+        author:Joi.string(),
+        tags:Joi.array().items(Joi.string()).min(1).required(),
+        
+        isPublished:Joi.boolean(),
+        price:Joi.number().min(1).max(100)
     })
     const {value,error} = schema.validate(req.body)
+    
+    
     if(error){
-        res.status(400).send(error.details[0].message)
+        const errors=[]
+        for(err of error.details)
+            errors.push(err.message)
+        res.status(400).send(errors)
         return;
     }
-    const course = {
-        id:courses.length + 1,
-        name:value.name
-    }
-    courses.push(course)
-    res.send(course)
+
+    courseAPI.createCourse(value)
+    .then(result=>{
+        
+        if(result.errors){
+            const errs=[]
+            for(err in result.errors)
+                errs.push(result.errors[err].message)
+            console.log(errs)
+            res.status(400).send(errs)
+        }
+        res.send(result)
+    })
+
+
 })
 router.put('/:id',(req,res)=>{
     

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
 const router = require('express').Router()
-const Genre = require('../models/genre')
+const { Genre } = require('../models/genre')
 
 mongoose.connect('mongodb://localhost/CustomerDataBase')
 .then(()=>console.log('Connected to MongoDB...'))

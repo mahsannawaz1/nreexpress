@@ -1,0 +1,101 @@
+const mongoose = require('mongoose')
+const Joi = require('joi')
+const router = require('express').Router()
+const Movie  = require('../models/movie')
+const { Genre }  = require('../models/genre')
+
+mongoose.connect('mongodb://localhost/CustomerDataBase')
+.then(()=>console.log('Connected to MongoDB...'))
+.catch((err)=>console.log(`Couldn't connect to MongoDB: ${err}`))
+
+router.get('/',async(req,res)=>{
+    res.send(await Movie.find())
+})
+router.get('/:id',async(req,res)=>{
+    const movie = await Movie.findById(req.params.id)
+    if(!movie){
+        res.status(404).send({ error:`Movie Not Found` })
+        return;
+    }
+    res.send(movie)
+})
+
+router.post('/',async(req,res)=>{
+    const { value,error } = validateMovie(req.body)
+    if(error){
+        res.status(400).send( { errors: error.details } )
+        return;
+    }
+    const genre = await Genre.findById(value.genreId)
+    if(!genre){
+        res.status(404).send( { error:`Genre ID Not Found` } )
+        return;
+    }
+    const movie = new Movie({
+        title:value.title,
+        genre:{
+            _id:genre._id,
+            name:genre.name
+        },
+        numberInStock:value.numberInStock,
+        dailyRentalRate:value.dailyRentalRate,
+
+    })
+    res.send(await movie.save())
+})
+
+router.put('/:id',async(req,res)=>{
+    const movie = await Movie.findById(req.params.id)
+    if(!movie){
+        res.status(404).send({ error:`Movie Not Found` })
+        return;
+    }
+
+    const { value,error } = validateMovie(req.body)
+    if(error){
+        res.status(400).send( { errors: error.details } )
+        return;
+    }
+    const genre = await Genre.findById(value.genreId)
+    if(!genre){
+        res.status(404).send( { error:`Genre ID Not Found` } )
+        return;
+    }
+
+    const updatedMovie = await Movie.findByIdAndUpdate(req.params.id,{
+        $set:{
+            title:value.title,
+            genre:{
+                _id:genre._id,
+                name:genre.name
+            },
+            numberInStock:value.numberInStock,
+            dailyRentalRate:value.dailyRentalRate,
+        }
+    },{ new:true })
+    res.send( updatedMovie )
+})
+
+router.delete('/:id',async(req,res)=>{
+    
+    const movie = await Movie.findByIdAndDelete(req.params.id)
+    if(!movie){
+        res.status(404).send( { error:`Movie Not Found` } )
+        return;
+    }
+    res.send(movie)
+})
+
+
+
+const validateMovie = (data)=>{
+    const schema = Joi.object({
+        title:Joi.string().min(3).max(255),
+        numberInStock:Joi.number().min(0).max(100),
+        dailyRentalRate:Joi.number().min(0).max(100),
+        genreId:Joi.string(),
+    })
+    return schema.validate(data)
+}
+
+module.exports = router

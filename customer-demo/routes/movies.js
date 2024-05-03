@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
 const router = require('express').Router()
 const Movie  = require('../models/movie')
 const { Genre }  = require('../models/genre')
@@ -90,10 +91,10 @@ router.delete('/:id',async(req,res)=>{
 
 const validateMovie = (data)=>{
     const schema = Joi.object({
-        title:Joi.string().min(3).max(255),
-        numberInStock:Joi.number().min(0).max(100),
-        dailyRentalRate:Joi.number().min(0).max(100),
-        genreId:Joi.string(),
+        title:Joi.string().min(3).max(255).required(),
+        numberInStock:Joi.number().min(0).max(100).required(),
+        dailyRentalRate:Joi.number().min(0).max(100).required(),
+        genreId:Joi.objectId().required(),
     })
     return schema.validate(data)
 }

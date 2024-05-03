@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 const router = require('express').Router()
@@ -9,9 +8,6 @@ const Rental = require('../models/rental')
 
 
 
-mongoose.connect('mongodb://localhost/CustomerDataBase')
-.then(()=>console.log('Connected to MongoDB...'))
-.catch((err)=>console.log(`Couldn't connect to MongoDB: ${err}`))
 
 Fawn.init('mongodb://localhost/CustomerDataBase')
 

@@ -1,11 +1,8 @@
-const mongoose = require('mongoose')
 const Joi = require('joi')
 const router = require('express').Router()
 const Customer = require('../models/customer')
 
-mongoose.connect('mongodb://localhost/CustomerDataBase')
-.then(()=>console.log('Connected to MongoDB...'))
-.catch((err)=>console.log(`Couldn't connect to MongoDB: ${err}`))
+
 
 router.get('/',async (req,res)=>{
     res.send( await Customer.find() )

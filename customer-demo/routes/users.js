@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const router = require('express').Router()
 const _ = require('lodash')
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
@@ -39,7 +40,9 @@ router.post('/',async(req,res)=>{
     //     name:user.name,
     //     email:user.email
     // })
-    res.send(_.pick(user,['_id','name','email']))
+    // const token = jwt.sign({ _id:user._id },process.env.JWT_SECRET_KEY)
+    const token = user.generateAuthToken()
+    res.header('x-auth-token',token).send(_.pick(user,['_id','name','email']))
     
 })
 

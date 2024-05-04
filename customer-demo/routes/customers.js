@@ -1,5 +1,6 @@
 const Joi = require('joi')
 const router = require('express').Router()
+const auth = require('../middlewares/auth')
 const Customer = require('../models/customer')
 
 
@@ -18,7 +19,7 @@ router.get('/:id',async (req,res)=>{
     res.send(customer)
 })
 
-router.post('/',async (req,res)=>{
+router.post('/',auth,async (req,res)=>{
     const { value, error } = validateCustomer(req.body)
     if(error){
         res.status(400).send( { errors: error.details } )
@@ -32,7 +33,7 @@ router.post('/',async (req,res)=>{
     
 })
 
-router.put('/:id',async (req,res)=>{
+router.put('/:id',auth,async (req,res)=>{
     const { value, error } = validateCustomer(req.body)
     if(error){
         res.status(400).send( { errors: error.details } )
@@ -47,7 +48,7 @@ router.put('/:id',async (req,res)=>{
     
 })
 
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',auth,async(req,res)=>{
     
     const customer = await Customer.findByIdAndDelete(req.params.id)
     if(!customer){

@@ -1,6 +1,7 @@
 const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 const router = require('express').Router()
+const auth = require('../middlewares/auth')
 const Movie  = require('../models/movie')
 const { Genre }  = require('../models/genre')
 
@@ -18,7 +19,7 @@ router.get('/:id',async(req,res)=>{
     res.send(movie)
 })
 
-router.post('/',async(req,res)=>{
+router.post('/',auth,async(req,res)=>{
     const { value,error } = validateMovie(req.body)
     if(error){
         res.status(400).send( { errors: error.details } )
@@ -42,7 +43,7 @@ router.post('/',async(req,res)=>{
     res.send(await movie.save())
 })
 
-router.put('/:id',async(req,res)=>{
+router.put('/:id',auth,async(req,res)=>{
     const movie = await Movie.findById(req.params.id)
     if(!movie){
         res.status(404).send({ error:`Movie Not Found` })
@@ -74,7 +75,7 @@ router.put('/:id',async(req,res)=>{
     res.send( updatedMovie )
 })
 
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',auth,async(req,res)=>{
     
     const movie = await Movie.findByIdAndDelete(req.params.id)
     if(!movie){

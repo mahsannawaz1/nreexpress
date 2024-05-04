@@ -3,14 +3,15 @@ const router = require('express').Router()
 const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const auth = require('../middlewares/auth')
 const User = require('../models/user')
 
 
 
-router.get('/',async(req,res)=>{
+router.get('/',auth,async(req,res)=>{
     res.send(await User.find())
 })
-router.get('/:id',async(req,res)=>{
+router.get('/:id',auth,async(req,res)=>{
     const user = await User.findById(req.params.id)
     if(!user){
         res.status(404).send( { error:`User Not Found` } )

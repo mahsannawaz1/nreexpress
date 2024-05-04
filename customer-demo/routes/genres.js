@@ -1,5 +1,6 @@
 const Joi = require('joi')
 const router = require('express').Router()
+const auth = require('../middlewares/auth')
 const { Genre } = require('../models/genre')
 
 
@@ -17,13 +18,12 @@ router.get('/:id',async(req,res)=>{
     res.send(genre)
 })
 
-router.post('/',async (req,res)=>{
+router.post('/',auth,async(req,res)=>{
     const { value, error } = validateGenre(req.body)
     if(error){
         res.status(400).send( { errors: error.details } )
         return;
-    }
-        
+}
 
     const genre = new Genre( { ...value } )
     res.send(await genre.save())
@@ -31,7 +31,7 @@ router.post('/',async (req,res)=>{
     
 })
 
-router.put('/:id',async (req,res)=>{
+router.put('/:id',auth,async (req,res)=>{
     const { value, error } = validateGenre(req.body)
     if(error){
         res.status(400).send( { errors: error.details } )
@@ -46,7 +46,7 @@ router.put('/:id',async (req,res)=>{
     
 })
 
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',auth,async(req,res)=>{
     
     const genre = await Genre.findByIdAndDelete(req.params.id)
     if(!genre){

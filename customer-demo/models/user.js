@@ -22,13 +22,14 @@ const userSchema  = new mongoose.Schema(
             minlength:6,
             maxlength:1024,
             required:true
-        }
+        },
+        isAdmin: Boolean
         
     }
 )
 
 userSchema.methods.generateAuthToken = function(){
-    return jwt.sign({ _id:this._id },process.env.JWT_SECRET_KEY)
+    return jwt.sign({ _id:this._id,isAdmin:this.isAdmin },process.env.JWT_SECRET_KEY)
 }
 
 module.exports = mongoose.model('User',userSchema)

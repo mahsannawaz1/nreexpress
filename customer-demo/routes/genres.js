@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const router = require('express').Router()
 const auth = require('../middlewares/auth')
+const admin = require('../middlewares/admin')
 const { Genre } = require('../models/genre')
 
 
@@ -46,7 +47,7 @@ router.put('/:id',auth,async (req,res)=>{
     
 })
 
-router.delete('/:id',auth,async(req,res)=>{
+router.delete('/:id',[auth,admin],async(req,res)=>{
     
     const genre = await Genre.findByIdAndDelete(req.params.id)
     if(!genre){

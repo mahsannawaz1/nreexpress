@@ -1,7 +1,6 @@
 const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 const router = require('express').Router()
-const Fawn = require('fawn')
 const auth = require('../middlewares/auth')
 const Customer = require('../models/customer')
 const Movie  = require('../models/movie')
@@ -11,9 +10,8 @@ const Rental = require('../models/rental')
 
 
 
-
 router.get('/',auth,async(req,res)=>{
-    res.send(await Rental.find().sort('-dateOut'))
+    res.send(await Rental.find())
 })
 
 router.get('/:id',auth,async(req,res)=>{

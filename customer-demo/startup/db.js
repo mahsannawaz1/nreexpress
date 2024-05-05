@@ -7,5 +7,4 @@ function connectToDatabase(){
     .then(()=> winston.info('Connected to MongoDB'))
     .catch((err)=>winston.error(`Couldn't connect to MongoDB`,err))
 }
-
 module.exports = connectToDatabase

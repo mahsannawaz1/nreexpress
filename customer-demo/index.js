@@ -1,16 +1,26 @@
+require('dotenv').config()
+require('express-async-errors')
+
+
 const customers = require('./routes/customers')
 const genres = require('./routes/genres')
 const movies = require('./routes/movies')
 const rentals = require('./routes/rentals')
 const users = require('./routes/users')
 const auth = require('./routes/auth')
+
+const winston  = require('winston')
 const error = require('./middlewares/error')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const helmet = require('helmet')
-require('dotenv').config()
 const express = require('express')
+
+
+
 const app = express()
+
+winston.add(new winston.transports.File({ filename:'logfile.log' }))
 
 if(!process.env.JWT_SECRET_KEY){
     console.error('FATAL ERROR: JWT Private key is not defined.')
@@ -26,7 +36,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.static('public'))
 app.use(helmet())
 if(process.env.NODE_ENV=='development'){
-    app.use(morgan('tiny'))
+    app.use(morgan('dev'))
 }
 
 

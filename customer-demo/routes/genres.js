@@ -11,7 +11,7 @@ const { Genre } = require('../models/genre')
 
 router.get('/', async(req,res)=>{
     const genres = await Genre.find().sort('name')
-    throw new Error("Simulated error occurred while fetching genres");
+    // throw new Error("Simulated error occurred while fetching genres");
     res.send(genres)
 })
 

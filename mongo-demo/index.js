@@ -47,23 +47,19 @@ const  courseSchema = new mongoose.Schema(
 const Course = mongoose.model('Course',courseSchema)
 
 
-async function createCourse(){
+async function createCourse(data){
     const course = new Course({
-        name:'React JS Native',
-        author:'Ahsan Nawaz',
-        tags:['js','react'], 
-        isPublished:false,
-        price:15,
-        category:'     mobile   '
-    })
+        ...data
+    }) 
     try{
         //  await course.validate()
-        const result = await course.save()
-        console.log(result)
+        return await course.save()
+        
     }
     catch(exception){
-        for(prop in exception.errors)
-            console.log(exception.errors[prop].message) //exception.errors[prop] returns ValidationError object
+        // for(prop in exception.errors)
+        //     console.log(exception.errors[prop].message) //exception.errors[prop] returns ValidationError object
+        return exception
         
     }
 
@@ -77,20 +73,42 @@ async function getCourses(){
     //lte -- less than equal to
     //in 
     //nin -- not in
-    const pageNumber = 2
-    const pageSize=10
+    // const pageNumber = 2
+    // const pageSize=10
     const courses = await Course
     .find()
-    .or([
-        {price:{$gte:15}},
-        {name:/.*by.*/},
-        {isPublished:true}
-        ])
-    .sort('-price')
-    .select('name author')
-    console.log(courses)
+    // .or([
+    //     {price:{$gte:15}},
+    //     {name:/.*by.*/},
+    //     {isPublished:true}
+    //     ])
+    // .sort('-price')
+    // .select('name author')
+    // console.log(courses)
+    return courses
 }
-async function updateCourse(id){
+async function getCourse(id){
+
+    // const pageNumber = 2
+    // const pageSize=10
+    try {
+        return await Course
+        .findById(id)
+    }
+    catch(exception){
+       return exception
+    }
+
+    // .or([
+    //     {price:{$gte:15}},
+    //     {name:/.*by.*/},
+    //     {isPublished:true}
+    //     ])
+    // .sort('-price')
+    // .select('name author')
+    
+}
+async function updateCourse(id,data){
     //Method 1
     // const course = await Course.findById(id)
     // if(!course) return;
@@ -111,13 +129,19 @@ async function updateCourse(id){
     //console.log(updatedCourse)
 
     //Method 3
-    const course = await Course.findByIdAndUpdate(id,{
-        $set:{
-            author:'Usama Nawaz',
-            isPublished:true
-            }
-    },{new:true})
-    console.log(course)  
+   
+    try{
+        const course = await Course.findByIdAndUpdate(id,{
+            $set:{
+               ...data
+                }
+        },{new:true})
+        return course
+    }
+    catch(exception){
+        return exception
+    }
+
 }
 async function deleteCourse(id){
     //Method 1
@@ -125,8 +149,16 @@ async function deleteCourse(id){
     //    console.log(deletedCourse)
 
     //Method 2
-    const deletedCourse = await Course.findByIdAndDelete(id)
-    console.log(deletedCourse)
+    try{
+        return await Course.findByIdAndDelete(id)
+    }
+    catch(exception){
+        return exception
+    }
 
 }
-createCourse()
+module.exports.getCourses = getCourses
+module.exports.getCourse = getCourse
+module.exports.updateCourse = updateCourse
+module.exports.deleteCourse = deleteCourse
+module.exports.createCourse = createCourse

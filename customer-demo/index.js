@@ -4,10 +4,11 @@ require('express-async-errors')
 const winston  = require('winston')
 require('winston-mongodb')
 const morgan = require('morgan')
-const mongoose = require('mongoose')
 const helmet = require('helmet')
 const express = require('express')
+
 const routes = require('./startup/routes')
+const connectToDatabase = require('./startup/db')
 const app = express()
 
 winston.add(new winston.transports.File({ 
@@ -29,7 +30,6 @@ process.on('unhandledRejection',(exception)=>{
     // process.exit(1)
 })
 
-
 // throw new Error('Error before starting app')
 // const p = Promise.reject(new Error('Something failed miserably'))
 // p.then(()=>console.log('Done'))
@@ -39,10 +39,7 @@ if(!process.env.JWT_SECRET_KEY){
     process.exit(1)
 }
 
-mongoose.connect('mongodb://localhost/CustomerDataBase')
-.then(()=>console.log('Connected to MongoDB...'))
-.catch((err)=>console.log(`Couldn't connect to MongoDB: ${err}`))
-
+connectToDatabase()
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.static('public'))

@@ -4,7 +4,7 @@ const movies = require('../routes/movies')
 const rentals = require('../routes/rentals')
 const users = require('../routes/users')
 const auth = require('../routes/auth')
-const error = require('./middlewares/error')
+const error = require('../middlewares/error')
 function routes(app){
     app.use('/api/customers',customers)
     app.use('/api/genres',genres)
